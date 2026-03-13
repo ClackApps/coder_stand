@@ -4,89 +4,105 @@
     <meta charset='utf-8' />
     <meta name='viewport' content='width=device-width, user-scalable=no' />
     <title>CodeR</title>
-    <script type="text/javascript" src="pako_inflate.min.js"></script>
-    <style type="text/css">
-        html {
-            position: relative;
-            min-height: 100%;
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        body {
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             user-select: none;
             caret-color: transparent;
-            height: 100%;
-            background-repeat: no-repeat;
-            background-position: center;
+        }
+
+        #backdrop {
+            position: fixed;
+            inset: 0;
+            background: #0d1117;
+            z-index: 0;
             overflow: hidden;
         }
 
-        #logo-container {
+        .bubble {
             position: absolute;
+            border-radius: 50%;
+            opacity: 0.12;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0%   { transform: translateY(110vh) scale(1); }
+            100% { transform: translateY(-20vh) scale(1.1); }
+        }
+
+        .bubble:nth-child(1)  { width: 80px;  height: 80px;  left: 5%;   background: #f97316; animation-duration: 9s;  animation-delay: 0s;  }
+        .bubble:nth-child(2)  { width: 50px;  height: 50px;  left: 12%;  background: #3b82f6; animation-duration: 13s; animation-delay: 2s;  }
+        .bubble:nth-child(3)  { width: 120px; height: 120px; left: 2%;   background: #a855f7; animation-duration: 11s; animation-delay: 5s;  }
+        .bubble:nth-child(4)  { width: 60px;  height: 60px;  right: 8%;  background: #22c55e; animation-duration: 10s; animation-delay: 1s;  }
+        .bubble:nth-child(5)  { width: 90px;  height: 90px;  right: 3%;  background: #f97316; animation-duration: 14s; animation-delay: 4s;  }
+        .bubble:nth-child(6)  { width: 40px;  height: 40px;  right: 15%; background: #ec4899; animation-duration: 8s;  animation-delay: 3s;  }
+        .bubble:nth-child(7)  { width: 70px;  height: 70px;  left: 7%;   background: #06b6d4; animation-duration: 12s; animation-delay: 7s;  }
+        .bubble:nth-child(8)  { width: 100px; height: 100px; right: 6%;  background: #a855f7; animation-duration: 15s; animation-delay: 0s;  }
+        .bubble:nth-child(9)  { width: 45px;  height: 45px;  left: 15%;  background: #3b82f6; animation-duration: 9s;  animation-delay: 6s;  }
+        .bubble:nth-child(10) { width: 65px;  height: 65px;  right: 12%; background: #22c55e; animation-duration: 11s; animation-delay: 2s;  }
+        .bubble:nth-child(11) { width: 35px;  height: 35px;  left: 3%;   background: #ec4899; animation-duration: 10s; animation-delay: 1s;  }
+        .bubble:nth-child(12) { width: 55px;  height: 55px;  right: 4%;  background: #06b6d4; animation-duration: 13s; animation-delay: 8s;  }
+        .bubble:nth-child(13) { width: 75px;  height: 75px;  left: 9%;   background: #f97316; animation-duration: 16s; animation-delay: 3s;  }
+        .bubble:nth-child(14) { width: 30px;  height: 30px;  right: 10%; background: #3b82f6; animation-duration: 7s;  animation-delay: 5s;  }
+        .bubble:nth-child(15) { width: 95px;  height: 95px;  left: 1%;   background: #22c55e; animation-duration: 12s; animation-delay: 9s;  }
+        .bubble:nth-child(16) { width: 42px;  height: 42px;  right: 2%;  background: #a855f7; animation-duration: 8s;  animation-delay: 4s;  }
+        .bubble:nth-child(17) { width: 110px; height: 110px; left: 14%;  background: #ec4899; animation-duration: 17s; animation-delay: 0s;  }
+        .bubble:nth-child(18) { width: 48px;  height: 48px;  right: 18%; background: #f97316; animation-duration: 10s; animation-delay: 7s;  }
+        .bubble:nth-child(19) { width: 58px;  height: 58px;  left: 4%;   background: #06b6d4; animation-duration: 14s; animation-delay: 2s;  }
+        .bubble:nth-child(20) { width: 85px;  height: 85px;  right: 7%;  background: #3b82f6; animation-duration: 11s; animation-delay: 6s;  }
+
+        #game-container {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            max-width: 98vw;
-            max-height: 98vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            z-index: 1;
+            height: 100vh;
+            width: min(calc(100vh * 9 / 16), 100vw);
         }
 
-        #logo {
+        #game-frame {
             width: 100%;
-            height: auto;
-            max-height: 100%;
+            height: 100%;
+            border: none;
             display: block;
-        }
-
-        .spinner {
-            margin-top: 20px;
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(0, 0, 0, 0.2);
-            border-top-color: #333;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
         }
     </style>
 </head>
-
 <body>
-<div id="logo-container">
-    <img id="logo" src="logo.png" alt="Logo">
-    <div class="spinner"></div>
+<div id="backdrop">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
 </div>
-
-<canvas id="canvas"></canvas>
-<script src="index.js"></script>
-<script>
-    const enginedata = "index";
-    const gamedata = "index.pck";
-    const engine = new Engine();
-
-    async function loadAndInit() {
-        try {
-            Promise.all([
-                engine.preloadFile(gamedata),
-                engine.init(enginedata)
-            ]).then(() => {
-                return engine.start({ args: ['--main-pack', gamedata], focusCanvas: true });
-            }).then(() => {
-                document.getElementById('logo-container').style.display = 'none';
-                console.log("Godot Engine has started!");
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    loadAndInit();
-</script>
+<div id="game-container">
+    <iframe id="game-frame" src="game.html" allowfullscreen></iframe>
+</div>
 </body>
 </html>
